@@ -3,11 +3,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Container, Nav } from 'react-bootstrap';
 import { useState } from 'react';
 import data from './data.js';
-import { Routes, Route, Link, useNavigate, Outlet } from 'react-router-dom'
+import { Routes, Route, useNavigate, Outlet } from 'react-router-dom'
+import Detail from './routes/Detail.js'
+import axios from 'axios'
 
 function App()
 {
-  let [shoes] = useState(data);
+  let [shoes, setShoes] = useState(data);
   let navigate = useNavigate();
 
   return (
@@ -34,82 +36,75 @@ function App()
                 {shoes.map((a, i) =>
                 {
                   return (
-                    <Cards shoes={shoes[i]} i={i} />
+                    <Cards shoes={shoes[i]} i={i} key={i} />
                   )
                 })}
               </div>
             </div>
+            <button onClick={() =>
+            {
+              axios.get('https://codingapple1.github.io/shop/data2.json')
+                .then((result) =>
+                {
+                  let copy = [...shoes, ...result.data];
+                  setShoes(copy);
+                })
+
+            }}>더보기</button>
           </>} />
-        <Route path="/detail" element={
+
+        <Route path="/detail/:id" element={<Detail shoes={shoes} />} />
+
+        {/* <Route path="/detail/:id" element={
           <>
             <div className="container">
               <div className="row">
+                {shoes.map((a, id) =>
                 {
-                  shoes.map((a, i) =>
-                  {
-                    return (
-                      <Shoedetail shoes={shoes[i]} i={i} />
-                    )
-                  })
+                  return (
+                    <Detail shoes={shoes} id={id} />
+                  )
+                })
                 }
               </div>
             </div>
           </>
-        } />
-        <Route path="/about" element={<About />}>
+          <Detail shoes={shoes} />
+        }></Route> */}
+
+        {/* <Route path="/about" element={<About />}>
           <Route path="member" element={<div> 멤버임 </div>} />
           <Route path="location" element={<About />} />
         </Route>
-
         <Route path="/event" element={<Event />}>
           <Route path="one" element={<div>첫 주문시 양배추즙 서비스</div>} />
           <Route path="two" element={<div>생일기념 쿠폰받기</div>} />
-        </Route>
+        </Route> */}
 
         <Route path="*" element={<div>없는 페이지입니다.</div>} />
-      </Routes>
 
+      </Routes>
     </div >
   );
 }
-function Event()
-{
-  return (
-    <div>
-      <h4> 오늘의 이벤트 </h4>
-      <Outlet> </Outlet>
-    </div>
-  )
-}
-
-
-function About()
-{
-  return (
-    <div>
-      <h4>회사정보임</h4>
-      <Outlet> </Outlet>
-    </div>
-  )
-}
-
-function Shoedetail(props)
-{
-  return (
-    <div className="container">
-      <div className="row">
-        <div className="col-md-6">
-          <img src={'https://codingapple1.github.io/shop/shoes' + (props.i + 1) + '.jpg'} width="100%" />
-        </div>
-        <div className="col-md-6">
-          <h4 className="pt-5">{props.shoes.title}</h4>
-          <p>{props.shoes.content}</p>
-          <p>{props.shoes.price}</p>
-          <button className="btn btn-danger">주문하기</button>
-        </div></div></div>
-  )
-}
-
+// function Event()
+// {
+//   return (
+//     <div>
+//       <h4> 오늘의 이벤트 </h4>
+//       <Outlet> </Outlet>
+//     </div>
+//   )
+// }
+// function About()
+// {
+//   return (
+//     <div>
+//       <h4>회사정보임</h4>
+//       <Outlet> </Outlet>
+//     </div>
+//   )
+// }
 function Cards(props)
 {
   return (
